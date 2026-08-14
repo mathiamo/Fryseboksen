@@ -43,13 +43,18 @@ function Inventory({ userId, email }: { userId: string; email: string }) {
   const [query, setQuery] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState("");
-  const [notifications, setNotifications] = useState(Notification.permission === "granted");
+  const notificationsSupported = "Notification" in window;
+  const [notifications, setNotifications] = useState(notificationsSupported && window.Notification.permission === "granted");
   useEffect(() => { listItems().then(setItems).catch((e: Error) => setError(e.message)).finally(() => setLoading(false)); }, []);
   const due = useMemo(() => items.filter((item) => status(item).tone !== "fresh"), [items]);
   const filtered = items.filter((item) => `${item.name} ${categoryLabel(item.category)}`.toLowerCase().includes(query.trim().toLowerCase()));
   async function enableNotifications() {
-    const permission = await Notification.requestPermission(); setNotifications(permission === "granted");
-    if (permission === "granted" && due.length) new Notification("Påminnelse fra Fryseboksen", { body: `${due.length} varer bør brukes snart.` });
+    if (!notificationsSupported) {
+      setError("Påminnelser støttes ikke i denne mobilnettleseren.");
+      return;
+    }
+    const permission = await window.Notification.requestPermission(); setNotifications(permission === "granted");
+    if (permission === "granted" && due.length) new window.Notification("Påminnelse fra Fryseboksen", { body: `${due.length} varer bør brukes snart.` });
   }
   async function add(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setError("");
@@ -61,7 +66,7 @@ function Inventory({ userId, email }: { userId: string; email: string }) {
     try { await deleteItem(item); setItems((current) => current.filter(({ id }) => id !== item.id)); } catch (e) { setError(e instanceof Error ? e.message : "Kunne ikke fjerne varen"); }
   }
   return <main>
-    <header className={styles.topbar}><a className={styles.brand} href="#top"><span className={styles.brandMark}><Snowflake size={20} /></span>Fryseboksen</a><div className={styles.headerActions}><button className={styles.secondary} onClick={enableNotifications}>{notifications ? <BellRing size={17} /> : <Bell size={17} />}<span>Påminnelser</span></button><button className={styles.iconButton} onClick={() => supabase.auth.signOut()} title={`Logg ut ${email}`}><LogOut size={18} /></button></div></header>
+    <header className={styles.topbar}><a className={styles.brand} href="#top"><span className={styles.brandMark}><Snowflake size={20} /></span>Fryseboksen</a><div className={styles.headerActions}>{notificationsSupported && <button className={styles.secondary} onClick={enableNotifications}>{notifications ? <BellRing size={17} /> : <Bell size={17} />}<span>Påminnelser</span></button>}<button className={styles.iconButton} onClick={() => supabase.auth.signOut()} title={`Logg ut ${email}`}><LogOut size={18} /></button></div></header>
     <section className={styles.hero} id="top"><div><span className={styles.eyebrow}>FRYSEREN DIN – MED FULL OVERSIKT</span><h1>Vit hva som er der. <em>Bruk det i tide.</em></h1><p>Registrer det du fryser ned, se hva som bør brukes snart, og kast mindre mat.</p><button className={styles.primary} onClick={() => setShowForm(true)}><Plus size={19} /> Legg til vare</button></div></section>
     <section className={styles.inventory}>
       <div className={styles.stats}><div><strong>{items.length}</strong><span>varer lagret</span></div><div><strong>{due.length}</strong><span>bruk snart</span></div><div><strong>{new Set(items.map((item) => item.category)).size}</strong><span>kategorier</span></div></div>
