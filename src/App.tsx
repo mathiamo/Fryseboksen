@@ -241,22 +241,6 @@ function Inventory({ userId, email }: InventoryProps) {
         </div>
       </header>
 
-      <section className={styles.hero} id="top">
-        <div>
-          <span className={styles.eyebrow}>FRYSEREN DIN – MED FULL OVERSIKT</span>
-          <h1>
-            Vit hva som er der. <em>Bruk det i tide.</em>
-          </h1>
-          <p>
-            Registrer det du fryser ned, se hva som bør brukes snart, og kast
-            mindre mat.
-          </p>
-          <button className={styles.primary} onClick={() => openForm()}>
-            <Plus size={19} /> Legg til vare
-          </button>
-        </div>
-      </section>
-
       <section className={styles.inventory}>
         <InventoryStats items={items} dueCount={dueItems.length} />
 
