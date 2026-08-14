@@ -1,29 +1,72 @@
 # Fryseboksen
 
-Static React + Vite frontend for GitHub Pages, with persistent data, passwordless authentication, and private image storage in Supabase.
+Fryseboksen is a static React and Vite application hosted on GitHub Pages. It
+uses Supabase for passwordless authentication, persistent freezer items, and
+private image storage.
 
-## Setup
+## Requirements
 
-1. Create a Supabase project.
-2. Run `supabase/migrations/202608140001_freezer_items.sql` in its SQL editor.
-3. Copy `.env.example` to `.env.local` and fill in the project URL and publishable key.
-4. Run `npm install` and `npm run dev`.
+- Node.js 22
+- pnpm 11
+- A Supabase project
 
-The migration enables Row Level Security so users can access only their own records and image folder. Never put a secret/service-role key in this frontend.
+The expected tool versions are recorded in `.nvmrc` and `package.json`.
+
+## Local development
+
+1. Copy `.env.example` to `.env.local`.
+2. Add the Supabase project URL and publishable key.
+3. Install dependencies with `pnpm install --frozen-lockfile`.
+4. Start the app with `pnpm dev`.
+
+Never put a Supabase secret key or service-role key in a `VITE_*` variable.
+Vite embeds those variables in the browser bundle.
+
+## IntelliJ IDEA setup
+
+1. Open the repository folder containing `package.json`.
+2. Select Node.js 22 under **Settings → Languages & Frameworks → Node.js**.
+3. Select pnpm as the package manager.
+4. Run `pnpm install --frozen-lockfile` in IntelliJ's terminal.
+5. Ensure the TypeScript service uses the project's
+   `node_modules/typescript` package.
+
+The project includes `.editorconfig`, explicit Vite browser types, and plain
+CSS without nesting so IntelliJ can inspect the source without additional CSS
+plugins.
+
+If imports remain red after installing dependencies, restart the TypeScript
+service or use **File → Invalidate Caches**.
+
+## Database migrations
+
+Migration files live in `supabase/migrations` and run in timestamp order.
+Apply pending migrations with the Supabase CLI:
+
+```bash
+supabase link --project-ref YOUR_PROJECT_ID
+supabase db push
+```
+
+Row Level Security ensures authenticated users can only read and change their
+own freezer items and images.
 
 ## GitHub Pages
 
-The workflow in `.github/workflows/deploy-pages.yml` deploys after pushes to `main`. Before the first deployment:
+`.github/workflows/deploy-pages.yml` builds and deploys pushes to `main`.
+Configure these repository values:
 
-- Choose **GitHub Actions** under **Settings → Pages**.
-- Add repository variable `VITE_SUPABASE_URL`.
-- Add repository secret `VITE_SUPABASE_PUBLISHABLE_KEY`.
-- Add `https://mathiamo.github.io/Fryseboksen/` to Supabase Auth redirect URLs.
+- Variable: `VITE_SUPABASE_URL`
+- Secret: `VITE_SUPABASE_PUBLISHABLE_KEY`
 
-The Vite base path is `/Fryseboksen/`; update it if the repository is renamed or uses a custom domain.
+Also add the deployed Pages URL to the allowed redirect URLs in Supabase Auth.
+The Vite base path is `/Fryseboksen/`; update it if the repository is renamed
+or moved to a custom domain.
 
 ## Commands
 
-- `npm run dev` — local server
-- `npm run build` — type-check and production build
-- `npm run lint` — lint source
+- `pnpm dev` — start the local development server
+- `pnpm typecheck` — run the TypeScript compiler
+- `pnpm lint` — run ESLint
+- `pnpm build` — type-check and create the production bundle
+- `pnpm preview` — preview the production bundle locally
