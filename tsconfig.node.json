@@ -1,11 +1,19 @@
 {
   "compilerOptions": {
     "composite": true,
+    "target": "ES2023",
+    "lib": ["ES2023"],
     "skipLibCheck": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "allowImportingTsExtensions": true,
-    "noEmit": true
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "moduleDetection": "force",
+    "types": ["node"]
   },
   "include": ["vite.config.ts"]
 }

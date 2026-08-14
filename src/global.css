@@ -1,6 +1,30 @@
-:root { font-family: Inter, ui-sans-serif, system-ui, sans-serif; color:#183332; background:#f7f5ef; font-synthesis:none; }
-* { box-sizing:border-box; }
-html { scroll-behavior:smooth; }
-body { margin:0; min-width:320px; }
-button,input,select { font:inherit; }
-button { cursor:pointer; }
+:root {
+  color: #183332;
+  background: #f7f5ef;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
