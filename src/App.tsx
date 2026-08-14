@@ -1,8 +1,8 @@
 import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { Bell, BellRing, Check, Clock3, IceCreamBowl, ImagePlus, LogOut, PackageOpen, Plus, Search, Snowflake, Trash2, X } from "lucide-react";
+import { Bell, BellRing, Check, Clock3, IceCreamBowl, ImagePlus, LogOut, PackageOpen, Pencil, Plus, Search, Snowflake, Trash2, X } from "lucide-react";
 import { Auth } from "./components/Auth";
-import { createItem, deleteItem, listItems, type FreezerItem } from "./lib/items";
+import { createItem, deleteItem, listItems, updateItem, type FreezerItem } from "./lib/items";
 import { isConfigured, supabase } from "./lib/supabase";
 import styles from "./App.module.css";
 
@@ -42,6 +42,7 @@ function Inventory({ userId, email }: { userId: string; email: string }) {
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [showForm, setShowForm] = useState(false);
+  const [editingItem, setEditingItem] = useState<FreezerItem | null>(null);
   const [error, setError] = useState("");
   const notificationsSupported = "Notification" in window;
   const [notifications, setNotifications] = useState(notificationsSupported && window.Notification.permission === "granted");
@@ -56,9 +57,27 @@ function Inventory({ userId, email }: { userId: string; email: string }) {
     const permission = await window.Notification.requestPermission(); setNotifications(permission === "granted");
     if (permission === "granted" && due.length) new window.Notification("Påminnelse fra Fryseboksen", { body: `${due.length} varer bør brukes snart.` });
   }
-  async function add(event: FormEvent<HTMLFormElement>) {
+  function openForm(item: FreezerItem | null = null) {
+    setEditingItem(item);
+    setShowForm(true);
+  }
+  function closeForm() {
+    setEditingItem(null);
+    setShowForm(false);
+  }
+  async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setError("");
-    try { const item = await createItem(new FormData(event.currentTarget), userId); setItems((current) => [item, ...current]); setShowForm(false); }
+    try {
+      const form = new FormData(event.currentTarget);
+      if (editingItem) {
+        const updated = await updateItem(form, editingItem, userId);
+        setItems((current) => current.map((item) => item.id === updated.id ? updated : item));
+      } else {
+        const item = await createItem(form, userId);
+        setItems((current) => [item, ...current]);
+      }
+      closeForm();
+    }
     catch (e) { setError(e instanceof Error ? e.message : "Kunne ikke lagre varen"); }
   }
   async function remove(item: FreezerItem) {
@@ -67,34 +86,34 @@ function Inventory({ userId, email }: { userId: string; email: string }) {
   }
   return <main>
     <header className={styles.topbar}><a className={styles.brand} href="#top"><span className={styles.brandMark}><Snowflake size={20} /></span>Fryseboksen</a><div className={styles.headerActions}>{notificationsSupported && <button className={styles.secondary} onClick={enableNotifications}>{notifications ? <BellRing size={17} /> : <Bell size={17} />}<span>Påminnelser</span></button>}<button className={styles.iconButton} onClick={() => supabase.auth.signOut()} title={`Logg ut ${email}`}><LogOut size={18} /></button></div></header>
-    <section className={styles.hero} id="top"><div><span className={styles.eyebrow}>FRYSEREN DIN – MED FULL OVERSIKT</span><h1>Vit hva som er der. <em>Bruk det i tide.</em></h1><p>Registrer det du fryser ned, se hva som bør brukes snart, og kast mindre mat.</p><button className={styles.primary} onClick={() => setShowForm(true)}><Plus size={19} /> Legg til vare</button></div></section>
+    <section className={styles.hero} id="top"><div><span className={styles.eyebrow}>FRYSEREN DIN – MED FULL OVERSIKT</span><h1>Vit hva som er der. <em>Bruk det i tide.</em></h1><p>Registrer det du fryser ned, se hva som bør brukes snart, og kast mindre mat.</p><button className={styles.primary} onClick={() => openForm()}><Plus size={19} /> Legg til vare</button></div></section>
     <section className={styles.inventory}>
       <div className={styles.stats}><div><strong>{items.length}</strong><span>varer lagret</span></div><div><strong>{due.length}</strong><span>bruk snart</span></div><div><strong>{new Set(items.map((item) => item.category)).size}</strong><span>kategorier</span></div></div>
       {due.length > 0 && <div className={styles.notice}><Clock3 /><div><strong>En liten påminnelse</strong><p>{due.length} varer begynner å bli gamle.</p></div></div>}
-      <div className={styles.inventoryHead}><div><span>INNHOLD</span><h2>Dette har du i fryseren</h2></div><button className={styles.primary} onClick={() => setShowForm(true)}><Plus size={18} /> Legg til</button></div>
+      <div className={styles.inventoryHead}><div><span>INNHOLD</span><h2>Dette har du i fryseren</h2></div><button className={styles.primary} onClick={() => openForm()}><Plus size={18} /> Legg til</button></div>
       <label className={styles.search}><Search size={19} /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Søk i fryseren…" /></label>
       {error && <div className={styles.error}>{error}</div>}
-      {loading ? <div className={styles.empty}>Laster fryseren…</div> : filtered.length ? <div className={styles.grid}>{filtered.map((item) => { const itemStatus = status(item); return <article className={styles.card} key={item.id}><div className={styles.image}>{item.imageUrl ? <img src={item.imageUrl} alt={item.name} /> : <IceCreamBowl size={42} />}<span className={`${styles.status} ${styles[itemStatus.tone]}`}>{itemStatus.tone === "fresh" && <Check size={13} />}{itemStatus.label}</span><button className={styles.deleteButton} onClick={() => remove(item)} aria-label={`Fjern ${item.name}`}><Trash2 size={16} /></button></div><div className={styles.cardBody}><div><h3>{item.name}</h3><b>×{item.quantity}</b></div><span>{categoryLabel(item.category)}</span><p>Fryst {new Intl.DateTimeFormat("nb-NO").format(new Date(`${item.frozenOn}T12:00:00`))}</p></div></article>; })}</div> : <div className={styles.empty}><PackageOpen size={42} /><h3>Fryseren er klar</h3><p>Legg til den første varen.</p></div>}
+      {loading ? <div className={styles.empty}>Laster fryseren…</div> : filtered.length ? <div className={styles.grid}>{filtered.map((item) => { const itemStatus = status(item); return <article className={styles.card} key={item.id}><div className={styles.image}>{item.imageUrl ? <img src={item.imageUrl} alt={item.name} /> : <IceCreamBowl size={42} />}<span className={`${styles.status} ${styles[itemStatus.tone]}`}>{itemStatus.tone === "fresh" && <Check size={13} />}{itemStatus.label}</span><button className={styles.editButton} onClick={() => openForm(item)} aria-label={`Rediger ${item.name}`}><Pencil size={16} /></button><button className={styles.deleteButton} onClick={() => remove(item)} aria-label={`Fjern ${item.name}`}><Trash2 size={16} /></button></div><div className={styles.cardBody}><div><h3>{item.name}</h3><b>×{item.quantity}</b></div><span>{categoryLabel(item.category)}</span>{item.comment && <p className={styles.comment}>{item.comment}</p>}<p className={styles.frozenDate}>Fryst {new Intl.DateTimeFormat("nb-NO").format(new Date(`${item.frozenOn}T12:00:00`))}</p></div></article>; })}</div> : <div className={styles.empty}><PackageOpen size={42} /><h3>Fryseren er klar</h3><p>Legg til den første varen.</p></div>}
     </section>
-    {showForm && <ItemModal onClose={() => setShowForm(false)} onSubmit={add} />}
+    {showForm && <ItemModal item={editingItem} onClose={closeForm} onSubmit={save} />}
   </main>;
 }
 
-function ItemModal({ onClose, onSubmit }: { onClose: () => void; onSubmit: (event: FormEvent<HTMLFormElement>) => void }) {
-  const [preview, setPreview] = useState<string>();
-  const [category, setCategory] = useState("Meals");
-  const [useWithinDays, setUseWithinDays] = useState<number>(recommendedDays("Meals"));
+function ItemModal({ item, onClose, onSubmit }: { item: FreezerItem | null; onClose: () => void; onSubmit: (event: FormEvent<HTMLFormElement>) => void }) {
+  const [preview, setPreview] = useState<string | undefined>(item?.imageUrl ?? undefined);
+  const [category, setCategory] = useState(item?.category ?? "Meals");
+  const [useWithinDays, setUseWithinDays] = useState<number>(item?.useWithinDays ?? recommendedDays("Meals"));
   function previewImage(event: ChangeEvent<HTMLInputElement>) { const file = event.target.files?.[0]; if (file) setPreview(URL.createObjectURL(file)); }
   function changeCategory(event: ChangeEvent<HTMLSelectElement>) {
     const nextCategory = event.target.value;
     setCategory(nextCategory);
     setUseWithinDays(recommendedDays(nextCategory));
   }
-  return <div className={styles.backdrop} onMouseDown={(e) => e.target === e.currentTarget && onClose()}><section className={styles.modal} role="dialog" aria-modal="true"><button className={styles.close} onClick={onClose}><X /></button><h2>Legg til i fryseren</h2><form onSubmit={onSubmit}>
+  return <div className={styles.backdrop} onMouseDown={(e) => e.target === e.currentTarget && onClose()}><section className={styles.modal} role="dialog" aria-modal="true"><button className={styles.close} onClick={onClose}><X /></button><h2>{item ? "Rediger vare" : "Legg til i fryseren"}</h2><form onSubmit={onSubmit}>
     <label className={styles.photo}>{preview ? <img src={preview} alt="Forhåndsvisning" /> : <><ImagePlus /><span>Legg til bilde</span><small>Komprimeres automatisk til WebP</small></>}<input name="image" type="file" accept="image/jpeg,image/png,image/webp" onChange={previewImage} /></label>
-    <label>Navn<input name="name" required maxLength={80} /></label><div className={styles.formRow}><label>Fryst ned<input name="frozenOn" type="date" defaultValue={new Date().toISOString().slice(0, 10)} required /></label><label>Antall<input name="quantity" type="number" min="1" max="99" defaultValue="1" required /></label></div>
+    <label>Navn<input name="name" required maxLength={80} defaultValue={item?.name} /></label><div className={styles.formRow}><label>Fryst ned<input name="frozenOn" type="date" defaultValue={item?.frozenOn ?? new Date().toISOString().slice(0, 10)} required /></label><label>Antall<input name="quantity" type="number" min="1" max="99" defaultValue={item?.quantity ?? 1} required /></label></div>
     <div className={styles.formRow}><label>Kategori<select name="category" value={category} onChange={changeCategory}>{categories.map(([value, label, days]) => <option key={value} value={value}>{label} · {durationOptions.find(([optionDays]) => optionDays === days)?.[1]}</option>)}</select></label><label>Bruk innen<select name="useWithinDays" value={useWithinDays} onChange={(event) => setUseWithinDays(Number(event.target.value))}>{durationOptions.map(([days, label]) => <option key={days} value={days}>{label}</option>)}</select></label></div>
-    <button className={styles.primary}>Legg til i fryseren</button>
+    <label>Kommentar<textarea name="comment" maxLength={500} rows={3} defaultValue={item?.comment} placeholder="For eksempel: halvfull pose" /></label>
+    <button className={styles.primary}>{item ? "Lagre endringer" : "Legg til i fryseren"}</button>
   </form></section></div>;
 }
-
