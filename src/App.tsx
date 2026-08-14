@@ -7,10 +7,15 @@ import { isConfigured, supabase } from "./lib/supabase";
 import styles from "./App.module.css";
 
 const categories = [
-  ["Meals", "Ferdigretter"], ["Meat", "Kjøtt"], ["Fish", "Fisk"], ["Vegetables", "Grønnsaker"],
-  ["Fruit", "Frukt og bær"], ["Baking", "Bakst"], ["Other", "Annet"],
+  ["Meals", "Ferdigretter", 90], ["Meat", "Kjøtt", 90], ["Fish", "Fisk", 90], ["Vegetables", "Grønnsaker", 240],
+  ["Fruit", "Frukt og bær", 240], ["Baking", "Bakst", 90], ["Other", "Annet", 90],
 ] as const;
 const categoryLabel = (value: string) => categories.find(([key]) => key === value)?.[1] ?? value;
+const recommendedDays = (value: string) => categories.find(([key]) => key === value)?.[2] ?? 90;
+const durationOptions = [
+  [30, "1 måned"], [60, "2 måneder"], [90, "3 måneder"], [120, "4 måneder"],
+  [180, "6 måneder"], [240, "8 måneder"], [365, "1 år"],
+] as const;
 const daysSince = (date: string) => Math.max(0, Math.floor((Date.now() - new Date(`${date}T12:00:00`).getTime()) / 86_400_000));
 function status(item: FreezerItem) {
   const left = item.useWithinDays - daysSince(item.frozenOn);
@@ -72,11 +77,19 @@ function Inventory({ userId, email }: { userId: string; email: string }) {
 
 function ItemModal({ onClose, onSubmit }: { onClose: () => void; onSubmit: (event: FormEvent<HTMLFormElement>) => void }) {
   const [preview, setPreview] = useState<string>();
+  const [category, setCategory] = useState("Meals");
+  const [useWithinDays, setUseWithinDays] = useState<number>(recommendedDays("Meals"));
   function previewImage(event: ChangeEvent<HTMLInputElement>) { const file = event.target.files?.[0]; if (file) setPreview(URL.createObjectURL(file)); }
+  function changeCategory(event: ChangeEvent<HTMLSelectElement>) {
+    const nextCategory = event.target.value;
+    setCategory(nextCategory);
+    setUseWithinDays(recommendedDays(nextCategory));
+  }
   return <div className={styles.backdrop} onMouseDown={(e) => e.target === e.currentTarget && onClose()}><section className={styles.modal} role="dialog" aria-modal="true"><button className={styles.close} onClick={onClose}><X /></button><h2>Legg til i fryseren</h2><form onSubmit={onSubmit}>
     <label className={styles.photo}>{preview ? <img src={preview} alt="Forhåndsvisning" /> : <><ImagePlus /><span>Legg til bilde</span><small>Komprimeres automatisk til WebP</small></>}<input name="image" type="file" accept="image/jpeg,image/png,image/webp" onChange={previewImage} /></label>
     <label>Navn<input name="name" required maxLength={80} /></label><div className={styles.formRow}><label>Fryst ned<input name="frozenOn" type="date" defaultValue={new Date().toISOString().slice(0, 10)} required /></label><label>Antall<input name="quantity" type="number" min="1" max="99" defaultValue="1" required /></label></div>
-    <div className={styles.formRow}><label>Kategori<select name="category">{categories.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><label>Bruk innen<select name="useWithinDays" defaultValue="90"><option value="30">30 dager</option><option value="60">60 dager</option><option value="90">90 dager</option><option value="180">6 måneder</option><option value="365">1 år</option></select></label></div>
+    <div className={styles.formRow}><label>Kategori<select name="category" value={category} onChange={changeCategory}>{categories.map(([value, label, days]) => <option key={value} value={value}>{label} · {durationOptions.find(([optionDays]) => optionDays === days)?.[1]}</option>)}</select></label><label>Bruk innen<select name="useWithinDays" value={useWithinDays} onChange={(event) => setUseWithinDays(Number(event.target.value))}>{durationOptions.map(([days, label]) => <option key={days} value={days}>{label}</option>)}</select></label></div>
     <button className={styles.primary}>Legg til i fryseren</button>
   </form></section></div>;
 }
+
