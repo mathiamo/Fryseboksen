@@ -29,8 +29,12 @@ export async function optimizeImage(file: File): Promise<File> {
 
 async function loadImage(file: File): Promise<{ source: CanvasImageSource; width: number; height: number; cleanup: () => void }> {
   if ("createImageBitmap" in window) {
-    const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
-    return { source: bitmap, width: bitmap.width, height: bitmap.height, cleanup: () => bitmap.close() };
+    try {
+      const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+      return { source: bitmap, width: bitmap.width, height: bitmap.height, cleanup: () => bitmap.close() };
+    } catch {
+      // Some mobile browsers expose createImageBitmap but reject photos or orientation options.
+    }
   }
 
   const url = URL.createObjectURL(file);
@@ -40,3 +44,4 @@ async function loadImage(file: File): Promise<{ source: CanvasImageSource; width
   await element.decode();
   return { source: element, width: element.naturalWidth, height: element.naturalHeight, cleanup: () => URL.revokeObjectURL(url) };
 }
+
