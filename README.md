@@ -1,46 +1,29 @@
 # Fryseboksen
 
-En norsk, mobilvennlig React-app som holder oversikt over mat i fryseren.
+Static React + Vite frontend for GitHub Pages, with persistent data, passwordless authentication, and private image storage in Supabase.
 
-## Funksjoner
+## Setup
 
-- registrer navn, nedfrysingsdato, antall, kategori og bilde
-- søk og filtrer innholdet
-- se hvilke varer som bør brukes snart
-- valgfrie nettleserpåminnelser
-- varig lagring av data og bilder med Cloudflare D1 og R2
+1. Create a Supabase project.
+2. Run `supabase/migrations/202608140001_freezer_items.sql` in its SQL editor.
+3. Copy `.env.example` to `.env.local` and fill in the project URL and publishable key.
+4. Run `npm install` and `npm run dev`.
 
-Den publiserte appen finnes på [freezer-keeper.mathiamo.chatgpt.site](https://freezer-keeper.mathiamo.chatgpt.site).
+The migration enables Row Level Security so users can access only their own records and image folder. Never put a secret/service-role key in this frontend.
 
-## Teknologi
+## GitHub Pages
 
-- React 19
-- TypeScript
-- Vinext/Vite
-- Drizzle ORM
-- Cloudflare D1 og R2
+The workflow in `.github/workflows/deploy-pages.yml` deploys after pushes to `main`. Before the first deployment:
 
-## Lokal utvikling
+- Choose **GitHub Actions** under **Settings → Pages**.
+- Add repository variable `VITE_SUPABASE_URL`.
+- Add repository secret `VITE_SUPABASE_PUBLISHABLE_KEY`.
+- Add `https://mathiamo.github.io/Fryseboksen/` to Supabase Auth redirect URLs.
 
-Krav: Node.js 22.13 eller nyere.
+The Vite base path is `/Fryseboksen/`; update it if the repository is renamed or uses a custom domain.
 
-```bash
-npm install
-npm run dev
-```
+## Commands
 
-Appen åpnes normalt på adressen som vises i terminalen. Lokal database og fillagring leveres av Cloudflare-utviklingsmiljøet i prosjektet.
-
-## Bygg
-
-```bash
-npm run build
-```
-
-## Databaseskjema
-
-Skjemaet ligger i `db/schema.ts`. Generer en ny migrasjon etter skjemaendringer:
-
-```bash
-npm run db:generate
-```
+- `npm run dev` — local server
+- `npm run build` — type-check and production build
+- `npm run lint` — lint source
