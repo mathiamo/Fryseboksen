@@ -124,7 +124,7 @@
 
 .stats {
   max-width: 720px;
-  margin: -30px auto 55px;
+  margin: 20px auto 20px;
   position: relative;
   display: grid;
   grid-template-columns: repeat(3, 1fr);

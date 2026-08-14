@@ -470,7 +470,6 @@ function ItemModal({ item, onClose, onSubmit }: ItemModalProps) {
               <>
                 <ImagePlus />
                 <span>Legg til bilde</span>
-                <small>Komprimeres automatisk til WebP</small>
               </>
             )}
             <input
