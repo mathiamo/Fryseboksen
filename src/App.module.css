@@ -1,3 +1,5 @@
+/* Header */
+
 .topbar {
   height: 64px;
   padding: 0 7vw;
@@ -6,10 +8,6 @@
   justify-content: space-between;
   background: #fffefbf2;
   border-bottom: 1px solid #18333217;
-
-  @media (max-width: 580px) {
-    padding: 0 18px;
-  }
 }
 
 .brand {
@@ -36,22 +34,17 @@
   gap: 8px;
 }
 
-:is(.secondary, .iconButton) {
+.secondary,
+.iconButton {
   display: flex;
   align-items: center;
   gap: 7px;
+  padding: 9px 13px;
+  color: #1b6260;
+  background: transparent;
   border: 1px solid #b8cbc5;
   border-radius: 999px;
-  background: transparent;
-  color: #1b6260;
-  padding: 9px 13px;
   font-weight: 700;
-}
-
-.secondary span {
-  @media (max-width: 580px) {
-    display: none;
-  }
 }
 
 .iconButton {
@@ -60,52 +53,40 @@
   padding: 0;
 }
 
+/* Hero */
+
 .hero {
   min-height: 0;
   display: block;
   padding: 38px 9vw 52px;
   background: linear-gradient(115deg, #f1f7f3, #f9f5ed 55%, #edf5f1);
+}
 
-  > div {
-    max-width: 900px;
-  }
+.hero > div {
+  max-width: 900px;
+}
 
-  h1 {
-    margin: 10px 0 12px;
-    font-family: Georgia, serif;
-    font-size: clamp(34px, 4.2vw, 52px);
-    line-height: 1.05;
-    letter-spacing: -0.04em;
+.hero h1,
+.authCard h1 {
+  margin: 10px 0 12px;
+  font-family: Georgia, serif;
+  font-size: clamp(34px, 4.2vw, 52px);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+}
 
-    em {
-      color: #1b6260;
-      font-weight: 500;
-    }
-  }
+.hero h1 em,
+.authCard h1 em {
+  color: #1b6260;
+  font-weight: 500;
+}
 
-  p {
-    max-width: 670px;
-    margin: 0 0 20px;
-    color: #647977;
-    font-size: 15px;
-    line-height: 1.6;
-  }
-
-  @media (max-width: 800px) {
-    text-align: left;
-  }
-
-  @media (max-width: 580px) {
-    padding: 30px 20px 44px;
-
-    h1 {
-      font-size: 36px;
-    }
-
-    p {
-      font-size: 14px;
-    }
-  }
+.hero p {
+  max-width: 670px;
+  margin: 0 0 20px;
+  color: #647977;
+  font-size: 15px;
+  line-height: 1.6;
 }
 
 .eyebrow {
@@ -115,16 +96,17 @@
   font-weight: 900;
 }
 
-:is(.primary, .authCard button) {
+.primary,
+.authCard button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  padding: 13px 18px;
+  color: white;
+  background: #1b6260;
   border: 0;
   border-radius: 11px;
-  background: #1b6260;
-  color: white;
-  padding: 13px 18px;
   font-weight: 800;
 }
 
@@ -132,74 +114,61 @@
   padding: 12px 17px;
 }
 
+/* Inventory overview */
+
 .inventory {
   max-width: 1180px;
   margin: auto;
   padding: 0 28px 90px;
-
-  @media (max-width: 580px) {
-    padding: 0 15px 60px;
-  }
 }
 
 .stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
   max-width: 720px;
   margin: -30px auto 55px;
   position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   background: #fffefb;
   border: 1px solid #dbe4df;
   border-radius: 16px;
+}
 
-  div {
-    padding: 18px;
-    display: flex;
-    justify-content: center;
-    align-items: baseline;
-    gap: 8px;
+.stats div {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  padding: 18px;
+}
 
-    + div {
-      border-left: 1px solid #dbe4df;
-    }
+.stats div + div {
+  border-left: 1px solid #dbe4df;
+}
 
-    @media (max-width: 580px) {
-      padding: 14px 4px;
-      flex-direction: column;
-      align-items: center;
-      gap: 0;
-    }
-  }
+.stats strong {
+  color: #1b6260;
+  font: 28px Georgia, serif;
+}
 
-  strong {
-    color: #1b6260;
-    font: 28px Georgia, serif;
-  }
-
-  span {
-    color: #647977;
-    font-size: 12px;
-
-    @media (max-width: 580px) {
-      font-size: 10px;
-    }
-  }
+.stats span {
+  color: #647977;
+  font-size: 12px;
 }
 
 .notice {
   display: flex;
   align-items: center;
   gap: 15px;
-  padding: 16px 20px;
   margin-bottom: 42px;
+  padding: 16px 20px;
   background: #fff6e9;
   border: 1px solid #e9c7ad;
   border-radius: 13px;
+}
 
-  p {
-    margin: 3px 0;
-    color: #796551;
-  }
+.notice p {
+  margin: 3px 0;
+  color: #796551;
 }
 
 .inventoryHead {
@@ -207,22 +176,18 @@
   align-items: flex-end;
   justify-content: space-between;
   margin-bottom: 22px;
+}
 
-  span {
-    color: #df7a61;
-    font-size: 10px;
-    font-weight: 900;
-    letter-spacing: 0.15em;
-  }
+.inventoryHead span {
+  color: #df7a61;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+}
 
-  h2 {
-    margin: 6px 0 0;
-    font: 34px Georgia, serif;
-
-    @media (max-width: 580px) {
-      font-size: 28px;
-    }
-  }
+.inventoryHead h2 {
+  margin: 6px 0 0;
+  font: 34px Georgia, serif;
 }
 
 .search {
@@ -231,33 +196,27 @@
   display: flex;
   align-items: center;
   gap: 9px;
-  padding: 0 13px;
   margin-bottom: 24px;
+  padding: 0 13px;
   color: #78908b;
   background: #fffefb;
   border: 1px solid #dbe4df;
   border-radius: 11px;
-
-  input {
-    width: 100%;
-    border: 0;
-    outline: 0;
-    background: transparent;
-  }
 }
+
+.search input {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  outline: 0;
+}
+
+/* Inventory cards */
 
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
-
-  @media (max-width: 800px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: 580px) {
-    grid-template-columns: 1fr;
-  }
 }
 
 .card {
@@ -274,21 +233,21 @@
   overflow: hidden;
   color: #8aa39d;
   background: #e2ebe7;
+}
 
-  > svg {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
+.image > svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 
-  img {
-    width: 100%;
-    height: 100%;
-    display: block;
-    object-fit: contain;
-    object-position: center;
-  }
+.image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  object-position: center;
 }
 
 .status {
@@ -321,16 +280,16 @@
 
 .editButton,
 .deleteButton {
-  position: absolute;
-  top: 11px;
   width: 32px;
   height: 32px;
+  position: absolute;
+  top: 11px;
   display: grid;
   place-items: center;
+  color: #7f5148;
+  background: #ffffffe8;
   border: 0;
   border-radius: 50%;
-  background: #ffffffe8;
-  color: #7f5148;
 }
 
 .editButton {
@@ -343,48 +302,48 @@
 
 .cardBody {
   padding: 17px;
+}
 
-  > div {
-    display: flex;
-    justify-content: space-between;
-  }
+.cardBody > div {
+  display: flex;
+  justify-content: space-between;
+}
 
-  h3 {
-    margin: 0;
-    font: 22px Georgia, serif;
-  }
+.cardBody h3 {
+  margin: 0;
+  font: 22px Georgia, serif;
+}
 
-  b {
-    padding: 3px 7px;
-    color: #1b6260;
-    background: #dceee9;
-    border-radius: 7px;
-  }
+.cardBody b {
+  padding: 3px 7px;
+  color: #1b6260;
+  background: #dceee9;
+  border-radius: 7px;
+}
 
-  > span {
-    display: block;
-    margin: 7px 0 16px;
-    color: #df7a61;
-    font-size: 10px;
-    font-weight: 900;
-    text-transform: uppercase;
-  }
+.cardBody > span {
+  display: block;
+  margin: 7px 0 16px;
+  color: #df7a61;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
 
-  .comment {
-    margin: 0 0 12px;
-    color: #4f6763;
-    font-size: 13px;
-    line-height: 1.45;
-    white-space: pre-wrap;
-  }
+.comment {
+  margin: 0 0 12px;
+  color: #4f6763;
+  font-size: 13px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
 
-  .frozenDate {
-    padding-top: 12px;
-    margin: 0;
-    color: #647977;
-    border-top: 1px solid #e6ebe8;
-    font-size: 11px;
-  }
+.frozenDate {
+  margin: 0;
+  padding-top: 12px;
+  color: #647977;
+  border-top: 1px solid #e6ebe8;
+  font-size: 11px;
 }
 
 .empty {
@@ -395,13 +354,16 @@
   border-radius: 17px;
 }
 
-:is(.error, .message) {
-  padding: 12px 15px;
+.error,
+.message {
   margin: 14px 0;
+  padding: 12px 15px;
   color: #983f31;
   background: #ffe6e0;
   border-radius: 9px;
 }
+
+/* Item form */
 
 .backdrop {
   position: fixed;
@@ -421,101 +383,102 @@
   padding: 28px;
   background: #fffefb;
   border-radius: 20px;
+}
 
-  h2 {
-    font: 32px Georgia, serif;
-  }
+.modal h2 {
+  font: 32px Georgia, serif;
+}
 
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
+.modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
 
-  label {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    font-size: 12px;
-    font-weight: 800;
-  }
+.modal label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 800;
+}
 
-  :is(input, select, textarea) {
-    height: 43px;
-    padding: 0 11px;
-    border: 1px solid #dbe4df;
-    border-radius: 9px;
-    background: white;
-  }
+.modal input,
+.modal select,
+.modal textarea,
+.authCard input {
+  height: 43px;
+  padding: 0 11px;
+  background: white;
+  border: 1px solid #dbe4df;
+  border-radius: 9px;
+}
 
-  textarea {
-    height: auto;
-    min-height: 80px;
-    padding-block: 10px;
-    resize: vertical;
-    font: inherit;
-  }
+.modal textarea {
+  height: auto;
+  min-height: 80px;
+  padding-block: 10px;
+  resize: vertical;
+  font: inherit;
 }
 
 .close {
+  width: 36px;
+  height: 36px;
   position: absolute;
   top: 18px;
   right: 18px;
-  width: 36px;
-  height: 36px;
+  background: #edf0ec;
   border: 0;
   border-radius: 50%;
-  background: #edf0ec;
 }
 
 .formRow {
   display: flex;
   gap: 12px;
+}
 
-  label {
-    flex: 1;
-  }
-
-  @media (max-width: 580px) {
-    flex-direction: column;
-  }
+.formRow label {
+  flex: 1;
 }
 
 .photo {
   height: auto;
   max-height: 240px;
   aspect-ratio: 4 / 3;
+  position: relative;
   display: flex !important;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  position: relative;
   overflow: hidden;
   color: #1b6260;
   background: #eff7f4;
   border: 1px dashed #8fb7ae;
   border-radius: 12px;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-  }
-
-  input {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-  }
-
-  small {
-    color: #647977;
-    font-weight: 600;
-  }
 }
+
+.photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.photo input {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+
+.photo small {
+  color: #647977;
+  font-weight: 600;
+}
+
+/* Authentication */
 
 .authPage {
   min-height: 100vh;
@@ -532,52 +495,98 @@
   border: 1px solid #dbe4df;
   border-radius: 22px;
   box-shadow: 0 24px 70px #244c4724;
+}
 
-  h1 {
-    margin: 18px 0;
-    font-family: Georgia, serif;
-    font-size: 48px;
-    line-height: 1;
-    letter-spacing: -0.04em;
+.authCard h1 {
+  margin: 18px 0;
+  font-size: 48px;
+  line-height: 1;
+}
 
-    em {
-      color: #1b6260;
-      font-weight: 500;
-    }
+.authCard p {
+  color: #647977;
+  line-height: 1.6;
+}
+
+.authCard form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.authCard label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* Responsive layout */
+
+@media (max-width: 800px) {
+  .hero {
+    text-align: left;
   }
 
-  p {
-    color: #647977;
-    line-height: 1.6;
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 580px) {
+  .topbar {
+    padding: 0 18px;
   }
 
-  form {
-    display: flex;
+  .secondary span {
+    display: none;
+  }
+
+  .hero {
+    padding: 30px 20px 44px;
+  }
+
+  .hero h1 {
+    font-size: 36px;
+  }
+
+  .hero p {
+    font-size: 14px;
+  }
+
+  .inventory {
+    padding: 0 15px 60px;
+  }
+
+  .stats div {
     flex-direction: column;
-    gap: 12px;
+    align-items: center;
+    gap: 0;
+    padding: 14px 4px;
   }
 
-  label {
-    display: flex;
+  .stats span {
+    font-size: 10px;
+  }
+
+  .inventoryHead h2 {
+    font-size: 28px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .formRow {
     flex-direction: column;
-    gap: 6px;
-    font-size: 12px;
-    font-weight: 800;
   }
 
-  input {
-    height: 43px;
-    padding: 0 11px;
-    border: 1px solid #dbe4df;
-    border-radius: 9px;
-    background: white;
-  }
-
-  @media (max-width: 580px) {
+  .authCard {
     padding: 28px 20px;
+  }
 
-    h1 {
-      font-size: 40px;
-    }
+  .authCard h1 {
+    font-size: 40px;
   }
 }
