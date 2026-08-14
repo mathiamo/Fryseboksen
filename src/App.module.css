@@ -461,8 +461,14 @@
 .photo img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  display: block;
+  object-fit: contain;
   object-position: center;
+}
+
+.modal label small {
+  color: #647977;
+  font-weight: 600;
 }
 
 .photo input {
