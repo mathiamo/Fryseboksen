@@ -1,4 +1,5 @@
 import { supabase } from "./supabase";
+import { optimizeImage } from "./images";
 
 export type FreezerItem = {
   id: string;
@@ -49,15 +50,15 @@ export async function listItems() {
 }
 
 export async function createItem(form: FormData, userId: string) {
-  const image = form.get("image");
+  const selectedImage = form.get("image");
   let imagePath: string | null = null;
-  if (image instanceof File && image.size) {
-    if (!new Set(["image/jpeg", "image/png", "image/webp"]).has(image.type) || image.size > 8_000_000) {
-      throw new Error("Velg et JPG-, PNG- eller WebP-bilde under 8 MB");
+  if (selectedImage instanceof File && selectedImage.size) {
+    if (selectedImage.size > 15_000_000) {
+      throw new Error("Velg et JPG-, PNG- eller WebP-bilde under 15 MB");
     }
-    const extension = image.type === "image/jpeg" ? "jpg" : image.type.split("/")[1];
-    imagePath = `${userId}/${crypto.randomUUID()}.${extension}`;
-    const upload = await supabase.storage.from("freezer-images").upload(imagePath, image, { contentType: image.type });
+    const image = await optimizeImage(selectedImage);
+    imagePath = `${userId}/${crypto.randomUUID()}.webp`;
+    const upload = await supabase.storage.from("freezer-images").upload(imagePath, image, { contentType: "image/webp" });
     if (upload.error) throw upload.error;
   }
 
