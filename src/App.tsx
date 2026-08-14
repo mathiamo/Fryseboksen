@@ -62,7 +62,11 @@ function daysSince(date: string) {
 }
 
 function itemStatus(item: FreezerItem) {
-  const daysLeft = item.useWithinDays - daysSince(item.frozenOn);
+  const daysLeft = item.useByDate
+    ? Math.ceil(
+        (new Date(`${item.useByDate}T12:00:00`).getTime() - Date.now()) / 86_400_000,
+      )
+    : item.useWithinDays - daysSince(item.frozenOn);
 
   if (daysLeft < 0) {
     return { label: `${Math.abs(daysLeft)} d over tiden`, tone: "danger" };
@@ -372,6 +376,9 @@ function ItemCard({ item, onEdit, onDelete }: ItemCardProps) {
   const frozenDate = new Intl.DateTimeFormat("nb-NO").format(
     new Date(`${item.frozenOn}T12:00:00`),
   );
+  const useByDate = item.useByDate
+    ? new Intl.DateTimeFormat("nb-NO").format(new Date(`${item.useByDate}T12:00:00`))
+    : null;
 
   return (
     <article className={styles.card}>
@@ -410,7 +417,10 @@ function ItemCard({ item, onEdit, onDelete }: ItemCardProps) {
         </div>
         <span>{categoryLabel(item.category)}</span>
         {item.comment && <p className={styles.comment}>{item.comment}</p>}
-        <p className={styles.frozenDate}>Fryst {frozenDate}</p>
+        <p className={styles.frozenDate}>
+          Fryst {frozenDate}
+          {useByDate && <> · Bruk innen {useByDate}</>}
+        </p>
       </div>
     </article>
   );
@@ -512,10 +522,9 @@ function ItemModal({ item, onClose, onSubmit }: ItemModalProps) {
             <label>
               Kategori
               <select name="category" value={category} onChange={changeCategory}>
-                {categories.map(([value, label, days]) => (
+                {categories.map(([value, label]) => (
                   <option key={value} value={value}>
-                    {label} ·{" "}
-                    {durationOptions.find(([optionDays]) => optionDays === days)?.[1]}
+                    {label}
                   </option>
                 ))}
               </select>
@@ -535,6 +544,16 @@ function ItemModal({ item, onClose, onSubmit }: ItemModalProps) {
               </select>
             </label>
           </div>
+
+          <label>
+            Egendefinert utløpsdato (valgfritt)
+            <input
+              name="useByDate"
+              type="date"
+              defaultValue={item?.useByDate ?? ""}
+            />
+            <small>Overstyrer beregnet «bruk innen» for denne varen.</small>
+          </label>
 
           <label>
             Kommentar

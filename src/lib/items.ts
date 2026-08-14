@@ -8,6 +8,7 @@ export type FreezerItem = {
   id: string;
   name: string;
   frozenOn: string;
+  useByDate: string | null;
   useWithinDays: number;
   quantity: number;
   category: string;
@@ -21,6 +22,7 @@ type ItemRow = {
   id: string;
   name: string;
   frozen_on: string;
+  use_by_date: string | null;
   use_within_days: number;
   quantity: number;
   category: string;
@@ -43,6 +45,7 @@ async function withImageUrl(row: ItemRow): Promise<FreezerItem> {
     id: row.id,
     name: row.name,
     frozenOn: row.frozen_on,
+    useByDate: row.use_by_date,
     useWithinDays: row.use_within_days,
     quantity: row.quantity,
     category: row.category,
@@ -133,6 +136,7 @@ function itemValues(form: FormData) {
   return {
     name: String(form.get("name") ?? "").trim(),
     frozen_on: String(form.get("frozenOn") ?? ""),
+    use_by_date: String(form.get("useByDate") ?? "") || null,
     quantity: Math.min(99, Math.max(1, Number(form.get("quantity") ?? 1))),
     use_within_days: Number(form.get("useWithinDays") ?? 90),
     category: String(form.get("category") ?? "Other"),
