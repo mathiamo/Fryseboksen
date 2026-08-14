@@ -5,3 +5,5 @@
 .topbar{height:64px}.brandMark{width:36px;height:36px}.hero{min-height:0;display:block;padding:38px 9vw 52px}.hero>div{max-width:900px}.hero h1{margin:10px 0 12px;font-size:clamp(34px,4.2vw,52px);line-height:1.05}.hero p{max-width:670px;margin:0 0 20px;font-size:15px;line-height:1.6}.eyebrow{font-size:10px}.primary{padding:12px 17px}.image{height:auto;aspect-ratio:4/3;overflow:hidden}.image img{display:block;object-position:center}.photo{height:auto;max-height:240px;aspect-ratio:4/3;display:flex!important;flex-direction:column;align-items:center;justify-content:center}.photo img{object-position:center}.photo small{color:#647977;font-weight:600}
 @media(max-width:800px){.hero{text-align:left}}
 @media(max-width:580px){.hero{padding:30px 20px 44px}.hero h1{font-size:36px}.hero p{font-size:14px}}
+.image img{object-fit:contain}
+
