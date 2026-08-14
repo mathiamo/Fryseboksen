@@ -319,10 +319,10 @@
   background: #ffe1dc;
 }
 
+.editButton,
 .deleteButton {
   position: absolute;
   top: 11px;
-  right: 11px;
   width: 32px;
   height: 32px;
   display: grid;
@@ -331,6 +331,14 @@
   border-radius: 50%;
   background: #ffffffe8;
   color: #7f5148;
+}
+
+.editButton {
+  right: 51px;
+}
+
+.deleteButton {
+  right: 11px;
 }
 
 .cardBody {
@@ -362,7 +370,15 @@
     text-transform: uppercase;
   }
 
-  p {
+  .comment {
+    margin: 0 0 12px;
+    color: #4f6763;
+    font-size: 13px;
+    line-height: 1.45;
+    white-space: pre-wrap;
+  }
+
+  .frozenDate {
     padding-top: 12px;
     margin: 0;
     color: #647977;
@@ -424,12 +440,20 @@
     font-weight: 800;
   }
 
-  :is(input, select) {
+  :is(input, select, textarea) {
     height: 43px;
     padding: 0 11px;
     border: 1px solid #dbe4df;
     border-radius: 9px;
     background: white;
+  }
+
+  textarea {
+    height: auto;
+    min-height: 80px;
+    padding-block: 10px;
+    resize: vertical;
+    font: inherit;
   }
 }
 
@@ -557,4 +581,3 @@
     }
   }
 }
-
