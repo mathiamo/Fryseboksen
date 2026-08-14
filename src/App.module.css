@@ -270,12 +270,17 @@
 .image {
   height: auto;
   aspect-ratio: 4 / 3;
-  display: grid;
-  place-items: center;
   position: relative;
   overflow: hidden;
   color: #8aa39d;
   background: #e2ebe7;
+
+  > svg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
 
   img {
     width: 100%;
